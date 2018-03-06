@@ -1,0 +1,38 @@
+{
+    "name": "helori/laravel-backend",
+    "description": "User interface to manage a website's content",
+    "keywords": ["laravel", "backend", "cms"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Helori Lanos",
+            "email": "helori@algoart.fr",
+            "homepage": "https://algoart.fr"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/helori/laravel-backend.git"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Helori\\LaravelBackend\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=5.5.9",
+        "helori/laravel-admin": "dev-master",
+    },
+    "require-dev": {
+        
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Helori\\LaravelBackend\\BackendServiceProvider"
+            ]
+        }
+    }
+}
