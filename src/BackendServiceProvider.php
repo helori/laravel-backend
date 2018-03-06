@@ -1,6 +1,6 @@
 <?php
 
-namespace Helori\LaravelAdmin;
+namespace Helori\LaravelBackend;
 
 use Illuminate\Support\ServiceProvider;
 
