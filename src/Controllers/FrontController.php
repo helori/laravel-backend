@@ -10,6 +10,7 @@ class FrontController extends Controller
 {
     public function home()
     {
-        return view('laravel-backend::home');
+        return view('laravel-backend::app');
     }
+
 }
