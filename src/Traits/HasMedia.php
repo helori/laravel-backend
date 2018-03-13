@@ -3,7 +3,7 @@
 namespace Helori\LaravelBackend\Traits;
 
 use Illuminate\Support\Str;
-use App\Models\Media;
+use Helori\LaravelBackend\Models\Media;
 
 
 trait HasMedia
