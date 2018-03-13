@@ -23,7 +23,7 @@
     },
     "require": {
         "php": ">=7.0.0",
-        "helori/laravel-admin": "1.*.*"
+        "helori/laravel-admin": "dev-master"
     },
     "require-dev": {
         
