@@ -99,7 +99,7 @@ class MediaController extends Controller
                 $media->size = $file->getClientSize();
                 $media->extension = $file_ext;
                 $media->filename = $file_name.'.'.$file_ext;
-                $media->title = $file_name;
+                $media->title = $file->getClientOriginalName();
                 $media->filepath = $file_path.'/'.$media->filename;
                 //$media->width = $img->width();
                 //$media->height = $img->height();

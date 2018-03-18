@@ -1,8 +1,15 @@
 require('lodash');
+
+/**
+ * JQuery & Bootstrap
+ */
 window.Popper = require('popper.js').default;
 window.$ = window.jQuery = require('jquery');
 require('bootstrap');
 
+/**
+ * Font Awesome
+ */
 import fontawesome from '@fortawesome/fontawesome'
 
 import freeSolid from '@fortawesome/fontawesome-free-solid'
@@ -11,9 +18,15 @@ fontawesome.icon(freeSolid);
 import proLight from '@fortawesome/fontawesome-pro-light'
 fontawesome.icon(proLight);
 
+/**
+ * Moment
+ */
 window.moment = require('moment');
 window.moment.locale('fr');
 
+/**
+ * Axios
+ */
 window.axios = require('axios');
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 let token = document.head.querySelector('meta[name="csrf-token"]');
@@ -23,6 +36,46 @@ if (token) {
     console.error('CSRF token not found: https://laravel.com/docs/csrf#csrf-x-csrf-token');
 }
 
+/**
+ * Numeral
+ */
+import numeral from 'numeral'
+
+numeral.register('locale', 'fr', {
+    delimiters: {
+        thousands: ' ',
+        decimal: ','
+    },
+    abbreviations: {
+        thousand: 'k',
+        million: 'm',
+        billion: 'b',
+        trillion: 't'
+    },
+    ordinal : function (number) {
+        return number === 1 ? 'er' : 'ème';
+    },
+    currency: {
+        symbol: '€'
+    }
+});
+
+numeral.locale('fr');
+
+Vue.filter('number', function (value, decimals) {
+    var format = '0,0';
+    if(decimals > 0){
+        format += '.';
+        for(var i=0; i<parseInt(decimals); ++i){
+            format += '0';
+        }
+    }
+    return numeral(value).format(format);
+});
+
+/**
+ * Tinymce
+ */
 require('tinymce');
 require('tinymce/themes/modern/theme.min');
 require('tinymce/plugins/textcolor/plugin.min');
@@ -46,6 +99,9 @@ require('tinymce/plugins/table/plugin.min');
 require('tinymce/plugins/contextmenu/plugin.min');
 require('tinymce/plugins/paste/plugin.min');
 
+/**
+ * Vue
+ */
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 Vue.use(VueRouter);

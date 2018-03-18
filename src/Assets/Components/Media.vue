@@ -49,7 +49,7 @@ input.file-input + label.disabled {
                             :aria-valuenow="(100 * uploadProgress / uploadTotal)" 
                             aria-valuemin="0" 
                             aria-valuemax="100">
-                            {{ 100 * uploadProgress / uploadTotal }} %
+                            {{ 100 * uploadProgress / uploadTotal | number(0) }} %
                         </div>
                     </div>
 
