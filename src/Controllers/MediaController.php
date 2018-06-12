@@ -185,11 +185,11 @@ class MediaController extends Controller
         if($media->type === 'image')
         {
             $rect = $request->input('rect', null);
-            $force = $request->input('force', 'none');
-            $force_value = $request->input('force_value', null);
-            //$compression = $request->input('compression', false);
-            $quality = intVal($request->input('quality', 0));
-            $rotate = intVal($request->input('rotate', 0));
+            
+            $force_width = intVal($request->input('force_width', 0));
+            $force_height = intVal($request->input('force_height', 0));
+            $compression = intVal($request->input('compression', 0));
+            $rotate = $request->input('rotate', null);
 
             if($rect['w'] != $media->width || $rect['h'] != $media->height)
             {
@@ -198,21 +198,21 @@ class MediaController extends Controller
                     return $response;
                 }
             }
-            if($force != 'none')
+            if($force_width !== 0 && $force_height !== 0)
             {
-                $response = $this->scaleImage($media, ($force == 'width') ? $force_value : null, ($force == 'height') ? $force_value : null);
+                $response = $this->scaleImage($media, $force_width, $force_height);
                 if($response !== true){
                     return $response;
                 }
             }
-            if($quality !== 0)
+            if($compression !== 0)
             {
-                $response = $this->optimizeImage($media, $quality);
+                $response = $this->optimizeImage($media, $compression);
                 if($response !== true){
                     return $response;
                 }
             }
-            if($rotate !== 0)
+            if($rotate !== null)
             {
                 $response = $this->rotateImage($media, $rotate);
                 if($response !== true){
@@ -245,8 +245,12 @@ class MediaController extends Controller
         return true;
     }
 
-    protected function rotateImage(&$media, $angle)
+    protected function rotateImage(&$media, $value = null)
     {
+        if(is_null($value)){
+            return false;
+        }
+
         ini_set('memory_limit', '4096M');
         clearstatcache();
 
@@ -255,8 +259,13 @@ class MediaController extends Controller
         Image::configure(); // ['driver' => 'imagick']
         $img = Image::make($abs_path);
 
-        if($angle !== 0){
-            $img->rotate($angle);
+        if($value === 'v' || $value === 'h'){
+            
+            $img->flip($value);
+        
+        }else if($value !== 0){
+            
+            $img->rotate($value);
         }
         
         $img->save($abs_path);
@@ -400,5 +409,19 @@ class MediaController extends Controller
         $media = Media::findOrFail($id);
         $path = public_path().'/'.$media->filepath;
         return response()->download($path, $media->filename);
+    }
+
+    public function open(Request $request, $id)
+    {
+        $media = Media::findOrFail($id);
+        $path = public_path().'/'.$media->filepath;
+
+        $infos = pathinfo($path);
+        $ext = $infos['extension'];
+
+        return response()->make(file_get_contents($path), 200, [
+            'Content-Type' => $media->mime,
+            'Content-Disposition' => 'inline; '.$media->title.'.'.$ext,
+        ]);
     }
 }

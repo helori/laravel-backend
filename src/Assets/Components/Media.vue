@@ -113,9 +113,14 @@ input.file-input + label.disabled {
                 <div class="card-footer">
                     <div class="form-row">
                         <div class="col">
-                            <button type="button" class="btn btn-primary btn-sm btn-block" @click="download(media)">
+                            <!--button type="button" class="btn btn-primary btn-sm btn-block" @click="download(media)">
                                 <i class="fal fa-download"></i>
-                            </button>
+                            </button-->
+                            <a :href="'/admin/media/' + media.id + '/open'" 
+                                class="btn btn-primary btn-sm btn-block" 
+                                target="_blank">
+                                <i class="fal fa-download"></i>
+                            </a>
                         </div>
                         <div class="col">
                             <button type="button" class="btn btn-primary btn-sm btn-block" @click="openUpdate(media)">
@@ -142,19 +147,19 @@ input.file-input + label.disabled {
 
 <script>
     
-	import MediaUpdater from './Widgets/MediaUpdater.vue';
+    import MediaUpdater from './Widgets/MediaUpdater.vue';
     import Pagination from './Widgets/Pagination.vue';
 
     export default {
 
-    	components:{
+        components:{
             MediaUpdater,
             Pagination
         },
         
         data(){
-        	return {
-        		id: Math.floor(Math.random()*(9999-1000+1)+1000),
+            return {
+                id: Math.floor(Math.random()*(9999-1000+1)+1000),
                 files: null,
                 search: {
                     text: '',
@@ -177,7 +182,7 @@ input.file-input + label.disabled {
 
                 destroyStatus: 'none',
                 destroyError: null
-        	}
+            }
         },
 
         watch: {
@@ -191,8 +196,8 @@ input.file-input + label.disabled {
         },
 
         mounted(){
-        	
-        	var self = this;
+            
+            var self = this;
 
             // -------------------------------------------------------
             //  Init browse button
@@ -240,7 +245,7 @@ input.file-input + label.disabled {
 
         methods: {
 
-        	read: function()
+            read: function()
             {
                 var url = '/admin/media?limit=4&page=' + this.page;
                 url += '&text=' + this.search.text;
@@ -262,7 +267,7 @@ input.file-input + label.disabled {
                 this.read();
             },
 
-        	upload: function()
+            upload: function()
             {
                 var self = this;
 

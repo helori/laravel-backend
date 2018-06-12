@@ -2,7 +2,7 @@
 <html>
 <head>
 
-    <title>Backend</title>
+    <title>{{ env('APP_NAME') }} Backend</title>
 
     <meta charset="utf-8">
     <meta name="csrf-token" content="{{ csrf_token() }}">

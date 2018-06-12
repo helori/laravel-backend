@@ -243,22 +243,22 @@
                             <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
 
                             <div class="form-row my-2">
-                                <div class="col-sm-2">Type : </div>
-                                <div class="col-sm-10">
+                                <div class="col-sm-3">Type : </div>
+                                <div class="col-sm-9">
                                     <span class="font-weight-bold">{{ item.mime }}</span>
                                 </div>
                             </div>
 
-                            <div class="form-row my-2">
-                                <div class="col-sm-2">Poids : </div>
-                                <div class="col-sm-10">
+                            <div class="form-row mb-2">
+                                <div class="col-sm-3">Poids : </div>
+                                <div class="col-sm-9">
                                     <span class="font-weight-bold">{{ item.size / 1000 }} ko</span>
                                 </div>
                             </div>
 
-                            <div class="form-group form-row">
-                                <label :for="'title-' + id" class="col-sm-2 col-form-label">Nom :</label>
-                                <div class="col-sm-10">
+                            <div class="form-group form-row mb-2">
+                                <label :for="'title-' + id" class="col-sm-3 col-form-label">Nom :</label>
+                                <div class="col-sm-9">
                                     <input type="text" 
                                         class="form-control" 
                                         :id="'title-' + id" 
@@ -270,112 +270,33 @@
 
                             <div v-if="item.type === 'image'">
 
-                                <div class="form-group form-row">
-                                    <label class="col-sm-4 col-form-label">Redimensionner :</label>
-                                    <div class="col-sm-8">
-                                        
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" 
-                                                :id="'size-none-' + id" 
-                                                :name="'size-' + id" 
-                                                v-model="force_size.type" 
-                                                value="none"
-                                                @change="setState('modified'); updateForceSize()">
-                                            <label class="form-check-label" :for="'size-none-' + id">
-                                                Aucun redimensionnement
-                                            </label>
-                                        </div>
-                                        
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" 
-                                                :id="'size-width-' + id" 
-                                                :name="'size-' + id" 
-                                                v-model="force_size.type" 
-                                                value="width"
-                                                @change="setState('modified'); updateForceSize()">
-                                            <label class="form-check-label" :for="'size-width-' + id">
-                                                En largeur
-                                            </label>
-                                        </div>
-
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="radio" 
-                                                :id="'size-height-' + id" 
-                                                :name="'size-' + id" 
-                                                v-model="force_size.type" 
-                                                value="height"
-                                                @change="setState('modified'); updateForceSize()">
-                                            <label class="form-check-label" :for="'size-height-' + id">
-                                                En hauteur
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group form-row" v-if="force_size.type !== 'none'">
-                                    <label :for="'force-size-value-' + id" class="col-sm-2 col-form-label">
-                                        <span v-if="force_size.type === 'width'">Largeur :</span>
-                                        <span v-if="force_size.type === 'height'">Hauteur :</span>
+                                <div class="form-group form-row mb-2">
+                                    <label :for="'force-width-value-' + id" class="col-sm-3 col-form-label">
+                                        Largeur :
                                     </label>
-                                    <div class="col-sm-10">
+                                    <div class="col-sm-9">
                                         <input type="number" 
                                             class="form-control" 
-                                            :id="'force-size-value-' + id" 
-                                            v-model="force_size.value"
-                                            @change="setState('modified')">
+                                            :id="'force-width-value-' + id" 
+                                            v-model="force_width"
+                                            @change="updateForceWidth">
                                     </div>
                                 </div>
 
-                                <div class="alert alert-warning text-center" 
-                                    v-if="force_size.type === 'width' && force_size.value > size_final.w">
-                                    <i class="fal fa-exclamation-triangle"></i> 
-                                    Vous risquez de pixeliser votre image en forçant une largeur supérieure à {{ size_final.w }}px !
-                                </div>
-
-                                <div class="alert alert-warning text-center" 
-                                    v-else-if="force_size.type === 'height' && force_size.value > size_final.h">
-                                    <i class="fal fa-exclamation-triangle"></i> 
-                                    Vous risquez de pixeliser votre image en forçant une hauteur supérieure à {{ size_final.h }}px !
-                                </div>
-
-                                <div class="alert alert-info text-center">
-                                    <i class="fal fa-info-circle"></i> Taille finale : 
-                                    <span v-if="force_size.type === 'width'">
-                                        {{ force_size.value }} x {{ Math.round(force_size.value * size_cropper.h / size_cropper.w) }} px
-                                    </span>
-                                    <span v-else-if="force_size.type === 'height'">
-                                        {{ Math.round(force_size.value * size_cropper.w / size_cropper.h) }} x {{ force_size.value }} px
-                                    </span>
-                                    <span v-else>
-                                        {{ size_final.w }} x {{ size_final.h }} px
-                                    </span>
-                                </div>
-
-                                <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-                                <!-- Compression -->
-                                <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-                                <!--div class="form-group form-row">
-                                    <label class="col-sm-3 col-form-label">Compression :</label>
+                                <div class="form-group form-row mb-2">
+                                    <label :for="'force-height-value-' + id" class="col-sm-3 col-form-label">
+                                        Hauteur :
+                                    </label>
                                     <div class="col-sm-9">
-                                        <div class="btn-group">
-                                            <button type="button"
-                                                class="btn"
-                                                :class="compression.active ? 'btn-primary' : 'btn-light'"
-                                                @click="compression.active = true; setState('modified')">
-                                                Compresser l'image
-                                            </button>
-                                            <button type="button"
-                                                class="btn"
-                                                :class="compression.active ? 'btn-light' : 'btn-primary'"
-                                                @click="compression.active = false; setState('modified')">
-                                                Ne pas compresser
-                                            </button>
-                                        </div>
-
+                                        <input type="number" 
+                                            class="form-control" 
+                                            :id="'force-height-value-' + id" 
+                                            v-model="force_height"
+                                            @change="updateForceHeight">
                                     </div>
-                                </div-->
+                                </div>
 
-                                <div class="form-group form-row">
+                                <div class="form-group form-row mb-2">
                                     <label class="col-sm-3 col-form-label">Rotation :</label>
                                     <div class="col-sm-9">
                                         <div class="btn-group w-100">
@@ -389,56 +310,62 @@
                                                 class="flex-grow-1 btn"
                                                 :class="rotate === 90 ? 'btn-primary' : 'btn-light'"
                                                 @click="rotate = 90; setState('modified')">
-                                                <i class="fal fa-arrow-left"></i>
-                                            </button>
-                                            <button type="button"
-                                                class="flex-grow-1 btn"
-                                                :class="rotate === 180 ? 'btn-primary' : 'btn-light'"
-                                                @click="rotate = 180; setState('modified')">
-                                                <i class="fal fa-arrows-v"></i>
+                                                <i class="fal fa-redo" data-fa-transform="flip-h"></i>
                                             </button>
                                             <button type="button"
                                                 class="flex-grow-1 btn"
                                                 :class="rotate === -90 ? 'btn-primary' : 'btn-light'"
                                                 @click="rotate = -90; setState('modified')">
-                                                <i class="fal fa-arrow-right"></i>
+                                                <i class="fal fa-redo"></i>
+                                            </button>
+                                            <button type="button"
+                                                class="flex-grow-1 btn"
+                                                :class="rotate === 'v' ? 'btn-primary' : 'btn-light'"
+                                                @click="rotate = 'v'; setState('modified')">
+                                                <i class="fal fa-arrows-v"></i>
+                                            </button>
+                                            <button type="button"
+                                                class="flex-grow-1 btn"
+                                                :class="rotate === 'h' ? 'btn-primary' : 'btn-light'"
+                                                @click="rotate = 'h'; setState('modified')">
+                                                <i class="fal fa-arrows-h"></i>
                                             </button>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="form-group form-row">
+                                <div class="form-group form-row mb-0">
                                     <label class="col-sm-3 col-form-label">Compression :</label>
                                     <div class="col-sm-9">
                                         <div class="btn-group w-100">
                                             <button type="button"
                                                 class="flex-grow-1 btn"
-                                                :class="compression.quality === 0 ? 'btn-primary' : 'btn-light'"
-                                                @click="compression.quality = 0; setState('modified')">
+                                                :class="compression === 0 ? 'btn-primary' : 'btn-light'"
+                                                @click="compression = 0; setState('modified')">
                                                 Aucune
                                             </button>
                                             <button type="button"
                                                 class="flex-grow-1 btn"
-                                                :class="compression.quality === 100 ? 'btn-primary' : 'btn-light'"
-                                                @click="compression.quality = 100; setState('modified')">
+                                                :class="compression === 100 ? 'btn-primary' : 'btn-light'"
+                                                @click="compression = 100; setState('modified')">
                                                 100%
                                             </button>
                                             <button type="button"
                                                 class="flex-grow-1 btn"
-                                                :class="compression.quality === 95 ? 'btn-primary' : 'btn-light'"
-                                                @click="compression.quality = 95; setState('modified')">
+                                                :class="compression === 95 ? 'btn-primary' : 'btn-light'"
+                                                @click="compression = 95; setState('modified')">
                                                 95%
                                             </button>
                                             <button type="button"
                                                 class="flex-grow-1 btn"
-                                                :class="compression.quality === 90 ? 'btn-primary' : 'btn-light'"
-                                                @click="compression.quality = 90; setState('modified')">
+                                                :class="compression === 90 ? 'btn-primary' : 'btn-light'"
+                                                @click="compression = 90; setState('modified')">
                                                 90%
                                             </button>
                                             <button type="button"
                                                 class="flex-grow-1 btn"
-                                                :class="compression.quality === 85 ? 'btn-primary' : 'btn-light'"
-                                                @click="compression.quality = 85; setState('modified')">
+                                                :class="compression === 85 ? 'btn-primary' : 'btn-light'"
+                                                @click="compression = 85; setState('modified')">
                                                 85%
                                             </button>
                                         </div>
@@ -448,7 +375,7 @@
 
                             </div>
 
-                            <div v-if="update_error" class="alert alert-danger">
+                            <div v-if="update_error" class="alert alert-danger mt-2">
                                 <div class="text-center">
                                     <p><strong>{{ update_error.title }}</strong></p>
                                     <p>{{ update_error.message }}</p>
@@ -528,14 +455,9 @@
                     cropper: {x: 0, y: 0, w: 0, h: 0}
                 },
 
-                force_size: {
-                    type: 'none',
-                    value: 0
-                },
-                compression: {
-                    active: false,
-                    quality: 100
-                },
+                force_width: 0,
+                force_height: 0,
+                compression: 0,
                 rotate: 0,
 
                 update_state: 'none',
@@ -569,10 +491,10 @@
             },
 
             resetDialog(){
-                this.force_size.type = 'none';
-                this.force_size.value = 0;
-                this.compression.active = false;
-                this.compression.quality = 100;
+                this.force_width = 0;
+                this.force_height = 0;
+                this.compression = 0;
+                this.rotate = 0;
                 this.update_state = 'none';
                 this.update_error = null;
             },
@@ -640,49 +562,45 @@
                     title: this.item.title,
                     copyright: this.item.copyright,
                     rect: this.size_final,
-                    force: this.force_size.type,
-                    force_value: this.force_size.value,
-                    compression: this.compression.active,
-                    quality: this.compression.quality,
+                    force_width: this.force_width,
+                    force_height: this.force_height,
+                    compression: this.compression,
                     rotate: this.rotate,
                 };
 
-                axios.put(this.uriPrefix + '/admin/media/' + this.item.id, data).then(response => {
+                axios.put(this.uriPrefix + '/admin/media/' + this.item.id, data).then(r => {
 
                     //console.log('update success', response);
                     this.setState('done');
-                    this.item = response.data;
-                    this.force_size.type = 'none';
+                    this.item = r.data;
                     this.rotate = 0;
 
                     this.prepareEditor();
-
                     this.updateFinalSize();
-                    this.updateForceSize();
 
                     this.$emit('updated', this.item);
 
-                }).catch(response => {
+                }).catch(r => {
 
                     this.setState('error');
-                    this.update_error = response.response.data;
-                    if(response.response.data.media){
-                        this.item = response.response.data.media;
+                    this.update_error = r.response.data;
+                    if(r.response.data.media){
+                        this.item = r.response.data.media;
                         this.prepareEditor();
                     }
+                    console.log('error', r);
 
                 });
             },
 
-            updateForceSize: function()
+            updateForceWidth: function()
             {
-                if(this.force_size.type == 'none'){
-                    this.force_size.value = 0;
-                }else if(this.force_size.type == 'width'){
-                    this.force_size.value = this.size_final.w;
-                }else if(this.force_size.type == 'height'){
-                    this.force_size.value = this.size_final.h;
-                }
+                this.force_height = Math.floor(this.size_final.h * this.force_width / this.size_final.w);
+            },
+
+            updateForceHeight: function()
+            {
+                this.force_width = Math.floor(this.size_final.w * this.force_height / this.size_final.h);
             },
 
             updateFinalSize: function()
@@ -693,6 +611,9 @@
                 this.size_final.y = Math.round(this.size_cropper.y * scale);
                 this.size_final.w = Math.round(this.size_cropper.w * scale);
                 this.size_final.h = Math.round(this.size_cropper.h * scale);
+
+                this.force_width = this.size_final.w;
+                this.force_height = this.size_final.h;
             },
 
             // ----------------------------------------------------------------
