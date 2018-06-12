@@ -354,7 +354,7 @@
                                 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
                                 <!-- Compression -->
                                 <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
-                                <div class="form-group form-row">
+                                <!--div class="form-group form-row">
                                     <label class="col-sm-3 col-form-label">Compression :</label>
                                     <div class="col-sm-9">
                                         <div class="btn-group">
@@ -373,41 +373,73 @@
                                         </div>
 
                                     </div>
+                                </div-->
+
+                                <div class="form-group form-row">
+                                    <label class="col-sm-3 col-form-label">Rotation :</label>
+                                    <div class="col-sm-9">
+                                        <div class="btn-group w-100">
+                                            <button type="button"
+                                                class="flex-grow-1 btn"
+                                                :class="rotate === 0 ? 'btn-primary' : 'btn-light'"
+                                                @click="rotate = 0; setState('modified')">
+                                                Aucune
+                                            </button>
+                                            <button type="button"
+                                                class="flex-grow-1 btn"
+                                                :class="rotate === 90 ? 'btn-primary' : 'btn-light'"
+                                                @click="rotate = 90; setState('modified')">
+                                                <i class="fal fa-arrow-left"></i>
+                                            </button>
+                                            <button type="button"
+                                                class="flex-grow-1 btn"
+                                                :class="rotate === 180 ? 'btn-primary' : 'btn-light'"
+                                                @click="rotate = 180; setState('modified')">
+                                                <i class="fal fa-arrows-v"></i>
+                                            </button>
+                                            <button type="button"
+                                                class="flex-grow-1 btn"
+                                                :class="rotate === -90 ? 'btn-primary' : 'btn-light'"
+                                                @click="rotate = -90; setState('modified')">
+                                                <i class="fal fa-arrow-right"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="form-group form-row" v-if="compression.active">
-                                    <label class="col-sm-3 col-form-label">Qualité :</label>
+                                <div class="form-group form-row">
+                                    <label class="col-sm-3 col-form-label">Compression :</label>
                                     <div class="col-sm-9">
-                                        <div class="btn-group">
+                                        <div class="btn-group w-100">
                                             <button type="button"
-                                                class="btn"
+                                                class="flex-grow-1 btn"
+                                                :class="compression.quality === 0 ? 'btn-primary' : 'btn-light'"
+                                                @click="compression.quality = 0; setState('modified')">
+                                                Aucune
+                                            </button>
+                                            <button type="button"
+                                                class="flex-grow-1 btn"
                                                 :class="compression.quality === 100 ? 'btn-primary' : 'btn-light'"
                                                 @click="compression.quality = 100; setState('modified')">
                                                 100%
                                             </button>
                                             <button type="button"
-                                                class="btn"
+                                                class="flex-grow-1 btn"
                                                 :class="compression.quality === 95 ? 'btn-primary' : 'btn-light'"
                                                 @click="compression.quality = 95; setState('modified')">
                                                 95%
                                             </button>
                                             <button type="button"
-                                                class="btn"
+                                                class="flex-grow-1 btn"
                                                 :class="compression.quality === 90 ? 'btn-primary' : 'btn-light'"
                                                 @click="compression.quality = 90; setState('modified')">
                                                 90%
                                             </button>
                                             <button type="button"
-                                                class="btn"
+                                                class="flex-grow-1 btn"
                                                 :class="compression.quality === 85 ? 'btn-primary' : 'btn-light'"
                                                 @click="compression.quality = 85; setState('modified')">
                                                 85%
-                                            </button>
-                                            <button type="button"
-                                                class="btn"
-                                                :class="compression.quality === 80 ? 'btn-primary' : 'btn-light'"
-                                                @click="compression.quality = 80; setState('modified')">
-                                                80%
                                             </button>
                                         </div>
 
@@ -504,6 +536,7 @@
                     active: false,
                     quality: 100
                 },
+                rotate: 0,
 
                 update_state: 'none',
                 update_error: null
@@ -610,7 +643,8 @@
                     force: this.force_size.type,
                     force_value: this.force_size.value,
                     compression: this.compression.active,
-                    quality: this.compression.quality
+                    quality: this.compression.quality,
+                    rotate: this.rotate,
                 };
 
                 axios.put(this.uriPrefix + '/admin/media/' + this.item.id, data).then(response => {
@@ -618,7 +652,14 @@
                     //console.log('update success', response);
                     this.setState('done');
                     this.item = response.data;
+                    this.force_size.type = 'none';
+                    this.rotate = 0;
+
                     this.prepareEditor();
+
+                    this.updateFinalSize();
+                    this.updateForceSize();
+
                     this.$emit('updated', this.item);
 
                 }).catch(response => {

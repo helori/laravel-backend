@@ -9,6 +9,8 @@ use Helori\LaravelBackend\Models\Media;
 use Image;
 
 
+// sudo apt-get install gifsicle jpegoptim pngquant optipng
+
 class MediaController extends Controller
 {
     public function read(Request $request, $id = null)
@@ -136,10 +138,12 @@ class MediaController extends Controller
 
                 $media->save();
 
-                if($media->width > 1200){
-                    $this->scaleImage($media, 1200);
-                }
-                $this->optimizeImage($media);
+                $max_width = config('laravel-backend.medias.images.max_width');
+                $max_height = config('laravel-backend.medias.images.max_width');
+                $compression_quality = config('laravel-backend.medias.images.compression_quality');
+
+                $this->scaleImage($media, $max_width, $max_height);
+                $this->optimizeImage($media, $compression_quality);
 
                 $medias[] = $media;
             }
@@ -183,8 +187,9 @@ class MediaController extends Controller
             $rect = $request->input('rect', null);
             $force = $request->input('force', 'none');
             $force_value = $request->input('force_value', null);
-            $compression = $request->input('compression', false);
-            $quality = $request->input('quality', 100);
+            //$compression = $request->input('compression', false);
+            $quality = intVal($request->input('quality', 0));
+            $rotate = intVal($request->input('rotate', 0));
 
             if($rect['w'] != $media->width || $rect['h'] != $media->height)
             {
@@ -200,9 +205,16 @@ class MediaController extends Controller
                     return $response;
                 }
             }
-            if($compression)
+            if($quality !== 0)
             {
                 $response = $this->optimizeImage($media, $quality);
+                if($response !== true){
+                    return $response;
+                }
+            }
+            if($rotate !== 0)
+            {
+                $response = $this->rotateImage($media, $rotate);
                 if($response !== true){
                     return $response;
                 }
@@ -233,7 +245,7 @@ class MediaController extends Controller
         return true;
     }
 
-    protected function scaleImage(&$media, $width = null, $height = null)
+    protected function rotateImage(&$media, $angle)
     {
         ini_set('memory_limit', '4096M');
         clearstatcache();
@@ -243,12 +255,10 @@ class MediaController extends Controller
         Image::configure(); // ['driver' => 'imagick']
         $img = Image::make($abs_path);
 
-        if($width && $width != $media->width){
-            $img->widen($width);
+        if($angle !== 0){
+            $img->rotate($angle);
         }
-        else if($height && $height != $media->height){
-            $img->heighten($height);
-        }
+        
         $img->save($abs_path);
 
         $media->width = $img->width();
@@ -261,8 +271,47 @@ class MediaController extends Controller
         return true;
     }
 
+    protected function scaleImage(&$media, $width = null, $height = null)
+    {
+        ini_set('memory_limit', '4096M');
+        clearstatcache();
+
+        $abs_path = public_path().'/'.$media->filepath;
+
+        Image::configure(); // ['driver' => 'imagick']
+        $img = Image::make($abs_path);
+
+        if($width > 0 && $width < $media->width){
+            $img->widen($width);
+            $media->width = $img->width();
+            $media->height = $img->height();
+        }
+        else if($height > 0 && $height < $media->height){
+            $img->heighten($height);
+            $media->width = $img->width();
+            $media->height = $img->height();
+        }
+        
+        $img->save($abs_path);
+        
+        $media->size = $img->filesize();
+        $media->decache = filemtime($abs_path);
+
+        $media->save();
+
+        return true;
+    }
+
     protected function optimizeImage(&$media, $quality = 100)
     {
+        if($quality === 0){
+            return response()->json([
+                'media' => $media,
+                'title' => "Oups, la compression a échoué !",
+                'message' => "La compression d'image ne peut pas être à 0"
+            ], 500);
+        }
+
         clearstatcache();
         
         $mimes = [
