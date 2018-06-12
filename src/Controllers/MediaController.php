@@ -280,7 +280,7 @@ class MediaController extends Controller
         return true;
     }
 
-    protected function scaleImage(&$media, $width = null, $height = null)
+    protected function scaleImage(&$media, $width = 0, $height = 0)
     {
         ini_set('memory_limit', '4096M');
         clearstatcache();
@@ -290,19 +290,19 @@ class MediaController extends Controller
         Image::configure(); // ['driver' => 'imagick']
         $img = Image::make($abs_path);
 
-        if($width > 0 && $width < $media->width){
+        if($width > 0 && $width < $img->width()){
+
             $img->widen($width);
-            $media->width = $img->width();
-            $media->height = $img->height();
-        }
-        else if($height > 0 && $height < $media->height){
+
+        }else if($height > 0 && $height < $img->height()){
+
             $img->heighten($height);
-            $media->width = $img->width();
-            $media->height = $img->height();
         }
         
         $img->save($abs_path);
         
+        $media->width = $img->width();
+        $media->height = $img->height();
         $media->size = $img->filesize();
         $media->decache = filemtime($abs_path);
 
