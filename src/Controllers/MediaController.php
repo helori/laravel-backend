@@ -189,7 +189,7 @@ class MediaController extends Controller
             $force_width = intVal($request->input('force_width', 0));
             $force_height = intVal($request->input('force_height', 0));
             $compression = intVal($request->input('compression', 0));
-            $rotate = $request->input('rotate', null);
+            $rotate = $request->input('rotate', 0);
 
             if($rect['w'] != $media->width || $rect['h'] != $media->height)
             {
@@ -212,7 +212,7 @@ class MediaController extends Controller
                     return $response;
                 }
             }
-            if($rotate !== null)
+            if($rotate !== 0)
             {
                 $response = $this->rotateImage($media, $rotate);
                 if($response !== true){
@@ -290,23 +290,33 @@ class MediaController extends Controller
         Image::configure(); // ['driver' => 'imagick']
         $img = Image::make($abs_path);
 
+        $width = intVal($width);
+        $height = intVal($height);
+        $changed = false;
+
         if($width > 0 && $width < $img->width()){
 
             $img->widen($width);
+            $changed = true;
 
         }else if($height > 0 && $height < $img->height()){
 
             $img->heighten($height);
+            $changed = true;
         }
-        
-        $img->save($abs_path);
-        
-        $media->width = $img->width();
-        $media->height = $img->height();
-        $media->size = $img->filesize();
-        $media->decache = filemtime($abs_path);
 
-        $media->save();
+        if($changed){
+
+            // 100 is quality, only applied for JPG images
+            $img->save($abs_path, 100);
+            
+            $media->width = $img->width();
+            $media->height = $img->height();
+            $media->size = $img->filesize();
+            $media->decache = filemtime($abs_path);
+
+            $media->save();
+        }
 
         return true;
     }
