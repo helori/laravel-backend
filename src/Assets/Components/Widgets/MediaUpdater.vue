@@ -8,16 +8,10 @@
         display: inline-block;
         cursor: pointer;
     }
-    .row.narrow{
-        margin-left: -2.5px;
-        margin-right: -2.5px;
-    }
-    .row.narrow .col{
-        padding-left: 2.5px;
-        padding-right: 2.5px;
-    }
-    .item{
-        
+    .ellipsis{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
     .bottom{
         padding: 5px;
@@ -256,8 +250,15 @@
                                 </div>
                             </div>
 
+                            <div class="form-row mb-2">
+                                <div class="col-sm-3">Fichier : </div>
+                                <div class="col-sm-9 ellipsis">
+                                    <span class="font-weight-bold">{{ item.filepath }}</span>
+                                </div>
+                            </div>
+
                             <div class="form-group form-row mb-2">
-                                <label :for="'title-' + id" class="col-sm-3 col-form-label">Nom :</label>
+                                <label :for="'title-' + id" class="col-sm-3 col-form-label">Titre :</label>
                                 <div class="col-sm-9">
                                     <input type="text" 
                                         class="form-control" 
@@ -272,27 +273,36 @@
 
                                 <div class="form-group form-row mb-2">
                                     <label :for="'force-width-value-' + id" class="col-sm-3 col-form-label">
-                                        Largeur :
+                                        Dimensions :
                                     </label>
                                     <div class="col-sm-9">
-                                        <input type="number" 
-                                            class="form-control" 
-                                            :id="'force-width-value-' + id" 
-                                            v-model="force_width"
-                                            @change="updateForceWidth">
-                                    </div>
-                                </div>
-
-                                <div class="form-group form-row mb-2">
-                                    <label :for="'force-height-value-' + id" class="col-sm-3 col-form-label">
-                                        Hauteur :
-                                    </label>
-                                    <div class="col-sm-9">
-                                        <input type="number" 
-                                            class="form-control" 
-                                            :id="'force-height-value-' + id" 
-                                            v-model="force_height"
-                                            @change="updateForceHeight">
+                                        <div class="d-flex justify-content-stretch">
+                                            <div class="flex-grow-1">
+                                                <div class="input-group">
+                                                    <input type="number" 
+                                                        class="form-control" 
+                                                        :id="'force-width-value-' + id" 
+                                                        v-model="force_width"
+                                                        @change="updateForceWidth">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">px</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mx-2 py-2">x</div>
+                                            <div class="flex-grow-1">
+                                                <div class="input-group">
+                                                    <input type="number" 
+                                                        class="form-control" 
+                                                        :id="'force-height-value-' + id" 
+                                                        v-model="force_height"
+                                                        @change="updateForceHeight">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text">px</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
