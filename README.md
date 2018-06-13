@@ -19,7 +19,7 @@ php artisan vendor:publish --tag=laravel-backend-assets
 
 Install the package's dependencies: 
 ```bash
-npm install jquery@3.* bootstrap@4.* --save-dev
+npm install jquery@3.* bootstrap@4.* vue-crud@2.* --save-dev
 ```
 
 Edit your laravel mix config file :

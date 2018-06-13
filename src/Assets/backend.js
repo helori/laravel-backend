@@ -39,7 +39,7 @@ if (token) {
 /**
  * Numeral
  */
-import numeral from 'numeral'
+/*import numeral from 'numeral'
 
 numeral.register('locale', 'fr', {
     delimiters: {
@@ -71,7 +71,15 @@ Vue.filter('number', function (value, decimals) {
         }
     }
     return numeral(value).format(format);
-});
+});*/
+
+require('vue-crud/src/filters/FilterDate.js');
+require('vue-crud/src/filters/FilterNumber.js');
+
+Vue.component(
+    'dialog-destroy',
+    require('vue-crud/src/widgets/DialogDestroy.vue')
+);
 
 /**
  * Tinymce

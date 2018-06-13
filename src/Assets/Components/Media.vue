@@ -128,7 +128,7 @@ input.file-input + label.disabled {
                             </button>
                         </div>
                         <div class="col">
-                            <button type="button" class="btn btn-danger btn-sm btn-block" @click="destroy(media)">
+                            <button type="button" class="btn btn-danger btn-sm btn-block" @click="openDestroy(media)">
                                 <i class="fal fa-trash"></i>
                             </button>
                         </div>
@@ -141,6 +141,16 @@ input.file-input + label.disabled {
             ref="mediaUpdater"
             @updated="read()">
         </media-updater>
+
+        <dialog-destroy
+            ref="destroyDialog"
+            title="Supprimer le média"
+            message="Êtes-vous certain(e) de vouloir supprimer définitivement ce média ?"
+            cancel-text="Annuler"
+            destroy-text="Confirmer la suppression"
+            :promise="destroyPromise"
+            @destroy="destroy">
+        </dialog-destroy>
 
     </div>
 </template>
@@ -180,8 +190,8 @@ input.file-input + label.disabled {
                 uploadTotal: 0,
                 uploadError: null,
 
-                destroyStatus: 'none',
-                destroyError: null
+                destroyMedia: null,
+                destroyPromise: null
             }
         },
 
@@ -314,12 +324,16 @@ input.file-input + label.disabled {
                 }
             },
 
-            destroy(media) {
+            openDestroy(media) {
+                this.destroyMedia = media;
+                this.$refs.destroyDialog.open();
+            },
 
-                this.destroyStatus = 'loading';
-                
-                axios.delete('/admin/media/' + media.id).then(response => {
+            destroy() {
 
+                this.destroyPromise = axios.delete('/admin/media/' + this.destroyMedia.id).then(response => {
+
+                    this.$refs.destroyDialog.close();
                     this.read();
                     
                 }).catch(response => {
