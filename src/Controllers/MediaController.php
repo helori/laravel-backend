@@ -112,6 +112,8 @@ class MediaController extends Controller
                 //$file->store($file_path);
                 $file->move(public_path().'/'.$file_path, $media->filename);
 
+                chmod($abs_path, 0755);
+
                 $media->size = filesize($abs_path);
                 $media->decache = filemtime($abs_path);
 
